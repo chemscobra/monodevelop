@@ -141,10 +141,11 @@ namespace MonoDevelop.SourceEditor
 
 		static void AutoSaveThread ()
 		{
+			FileContent content;
 			while (autoSaveThreadRunning) {
 				resetEvent.WaitOne ();
 				while (queue.Count > 0) {
-					var content = queue.Dequeue ();
+					content = queue.Dequeue ();
 					// Don't create an auto save for unsaved files.
 					if (string.IsNullOrEmpty (content.FileName))
 						continue;
@@ -159,7 +160,7 @@ namespace MonoDevelop.SourceEditor
 						CreateAutoSave (content.FileName, text);
 					}
 					);
-					
+					content = null;
 				}
 			}
 		}

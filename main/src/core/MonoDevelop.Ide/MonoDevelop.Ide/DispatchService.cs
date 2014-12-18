@@ -294,8 +294,8 @@ namespace MonoDevelop.Ide
 
 		static void backgroundDispatcher ()
 		{
+			GenericMessageContainer msg = null;
 			while (true) {
-				GenericMessageContainer msg = null;
 				bool wait = false;
 				lock (backgroundQueue) {
 					if (backgroundQueue.Count == 0) {
@@ -314,6 +314,7 @@ namespace MonoDevelop.Ide
 					msg.Run ();
 					if (msg.Exception != null)
 						HandlerError (msg);
+					msg = null;
 				}
 			}
 		}
