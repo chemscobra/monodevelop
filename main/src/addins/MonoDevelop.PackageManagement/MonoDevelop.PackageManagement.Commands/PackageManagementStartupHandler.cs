@@ -79,17 +79,19 @@ namespace MonoDevelop.PackageManagement.Commands
 			ClearUpdatedPackagesInSolution ();
 		}
 
+		async void RestoreAndCheckForUpdatesAsync (bool checkUpdatesAfterRestore, PackageRestorer restorer)
+		{
+			restorer.Restore ();
+			if (checkUpdatesAfterRestore && !restorer.RestoreFailed) {
+				CheckForUpdates ();
+			}
+		}
+
 		void RestoreAndCheckForUpdates ()
 		{
 			bool checkUpdatesAfterRestore = ShouldCheckForUpdates && AnyProjectHasPackages ();
-
 			var restorer = new PackageRestorer (projectService.OpenSolution.Solution);
-			DispatchService.BackgroundDispatch (() => {
-				restorer.Restore ();
-				if (checkUpdatesAfterRestore && !restorer.RestoreFailed) {
-					CheckForUpdates ();
-				}
-			});
+			RestoreAndCheckForUpdatesAsync (checkUpdatesAfterRestore, restorer);
 		}
 
 		bool AnyProjectHasPackages ()
